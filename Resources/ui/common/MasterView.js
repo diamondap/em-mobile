@@ -5,7 +5,6 @@ function MasterView() {
 		backgroundColor:'white'
 	});
 
-/*
 
 	//some dummy data for our table view
 	var tableData = [
@@ -30,10 +29,9 @@ function MasterView() {
 		});
 	});
 
-*/
 
 	var Router = require("../../em/routers/medialink_mwn_wapr300n");
-	var router = Router();
+	var router = Router(self);
 	router.getLoginCredentials();
 	return self;
 };

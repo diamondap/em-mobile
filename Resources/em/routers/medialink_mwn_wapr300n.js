@@ -2,7 +2,7 @@
  * Adapter for Medialink MWN WAPR300N wireless router.
  * 
  */
-function Medialink_mwn_wapr300n() {
+function Medialink_mwn_wapr300n(masterView) {
 
 	// Router properties
 	this.description = 'ResponseManager for MediaLink MWN_WAPR300N Router';
@@ -13,21 +13,42 @@ function Medialink_mwn_wapr300n() {
     this.parser_type = 'regex';
     this.comment = "This router's HTML is unparsable because its data is in JavaScript variables and it uses document.write() everywhere.";
 
+	var filterType = null;
+	var networkClients = [];
+
 	var baseUrl = "http://192.168.1.1";
 	var HttpClient = require('../HttpClient');
 	var client = HttpClient();
+
+	function getDHCPClientList() {
+		var url = baseUrl + "/lan_dhcp_clients.asp";
+		client.get(url, null, function(e) {
+			var reClients = /var dhcpList=new Array\((.*)\);/;
+			var clientString = null;
+			try { clientString = reClients.exec(client.client.responseText)[1]; }
+			catch(ex) {}
+			var clientList = clientString.split(',');
+			for(var i=0; i < clientList.length; i++) {
+				var c = clientList[i].replace("'", "");
+				var data = c.split(";");
+				var netClient = { 'hostname': data[0], 'ip4Address': data[1], 'macAddress': data[2] };
+				networkClients.push(netClient);
+				Ti.API.info(data[1]);
+			}
+		});
+	}
 
 	function getFilterType() {
 		Ti.API.info("getFilterType()");
 		var filterTypeUrl = baseUrl + "/wireless_filter.asp";
 		client.get(filterTypeUrl, null, function(e) {
-			var filterType = null;
 			var reFilterType = /var filter_mode = "(\w+)"/;
 			try { filterType = reFilterType.exec(client.client.responseText)[1]; }
 			catch(ex) {}
 			Ti.API.info("FilterType = " + filterType);
 			//Ti.API.info("Response Status = " + client.client.status);
 			//Ti.API.info("Response Text = " + client.client.responseText);
+			getDHCPClientList();
 		});
 	}
 
