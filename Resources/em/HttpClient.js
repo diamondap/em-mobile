@@ -22,7 +22,7 @@ function HttpClient(options){
 	};
 	
 	this.post = function (url, data, callback) {
-		client.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		//client.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		client.onload = callback;
 		client.open("POST", url);
 		client.send(data);		

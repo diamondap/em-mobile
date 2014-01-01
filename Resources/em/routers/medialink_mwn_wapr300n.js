@@ -17,22 +17,51 @@ function Medialink_mwn_wapr300n() {
 	var HttpClient = require('../HttpClient');
 	var client = HttpClient();
 
-	var user = null;
-	var password = null;
+	function getFilterType() {
+		Ti.API.info("getFilterType()");
+		var filterTypeUrl = baseUrl + "/wireless_filter.asp";
+		client.get(filterTypeUrl, null, function(e) {
+			var filterType = null;
+			var reFilterType = /var filter_mode = "(\w+)"/;
+			try { filterType = reFilterType.exec(client.client.responseText)[1]; }
+			catch(ex) {}
+			Ti.API.info("FilterType = " + filterType);
+			//Ti.API.info("Response Status = " + client.client.status);
+			//Ti.API.info("Response Text = " + client.client.responseText);
+		});
+	}
 
-	this.getLoginCredentials = function () {
-		client.get(baseUrl, null, function(e) {
-			var reUser = /username1="(.*)"/;
-			var rePassword = /password1="(.*)"/;
-			try { user = reUser.exec(client.client.responseText)[0]; }
-			catch(ex) {}
-			try { password = rePassword.exec(client.client.responseText)[0]; }
-			catch(ex) {}
-			Ti.API.info("User = " + user);
-			Ti.API.info("Password = " + password);			
+	function login (user, password) {
+		Ti.API.info("login()");
+		var loginUrl = baseUrl + "/LoginCheck";
+		var data = {'checkEn': 0,
+                	'Username': user,
+                	'Password': password};
+		client.post(loginUrl, data, function(e){
+			var cookie = client.client.getResponseHeader('Set-Cookie');
+			Ti.API.info("Cookie = " + cookie);
+			getFilterType();
 		});
 	};
 
+	this.getLoginCredentials = function () {
+		Ti.API.info("getLoginCredentials()");
+		var credUrl = baseUrl + "/login.asp";
+		client.get(credUrl, null, function(e) {
+			var user = null;
+			var password = null;
+			var reUser = /var username1="(.*)"/;
+			var rePassword = /var password1="(.*)"/;
+			try { user = reUser.exec(client.client.responseText)[1]; }
+			catch(ex) {}
+			try { password = rePassword.exec(client.client.responseText)[1]; }
+			catch(ex) {}
+			Ti.API.info("User = " + user);
+			Ti.API.info("Password = " + password);
+			login(user, password);
+		});
+	};
+	
 	return this;	
 }
 
