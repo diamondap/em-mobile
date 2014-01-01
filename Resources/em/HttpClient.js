@@ -1,7 +1,7 @@
 function HttpClient(options){
 	
 	var opts = options || { timeout: 3000, onerror: this.onError };
-	var client = Ti.Network.createHTTPClient(opts);
+	this.client = Ti.Network.createHTTPClient(opts);
 	
 	this.onError = function (e) {
 		Ti.API.debug("STATUS: " + client.status);

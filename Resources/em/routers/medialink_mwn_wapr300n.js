@@ -17,8 +17,20 @@ function Medialink_mwn_wapr300n() {
 	var HttpClient = require('../HttpClient');
 	var client = HttpClient();
 
+	var user = null;
+	var password = null;
+
 	this.getLoginCredentials = function () {
-		client.get(baseUrl, null, client.dumpResponse);
+		client.get(baseUrl, null, function(e) {
+			var reUser = /username1="(.*)"/;
+			var rePassword = /password1="(.*)"/;
+			try { user = reUser.exec(client.client.responseText)[0]; }
+			catch(ex) {}
+			try { password = rePassword.exec(client.client.responseText)[0]; }
+			catch(ex) {}
+			Ti.API.info("User = " + user);
+			Ti.API.info("Password = " + password);			
+		});
 	};
 
 	return this;	
