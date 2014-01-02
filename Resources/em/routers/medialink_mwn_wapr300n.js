@@ -23,7 +23,7 @@ function Medialink_mwn_wapr300n(masterView) {
 	function setClientTitles() {
 		for(var i=0; i < networkClients.length; i++) {
 			var c = networkClients[i];
-			c['title'] = c['hostname'] + ' (' + c['connectionType'] + ')';
+			c['title'] = c['hostname'] + ' (' + c['connectionType'] + ' at ' + c['ip4Address'] + ')';
 			c['color'] = '#000';
 		}
 		Ti.API.info("Number of clients = " + networkClients.length);
