@@ -23,7 +23,7 @@ function Medialink_mwn_wapr300n(masterView) {
 	function setClientTitles() {
 		for(var i=0; i < networkClients.length; i++) {
 			var c = networkClients[i];
-			c['title'] = c['hostname'];
+			c['title'] = c['hostname'] + ' (' + c['connectionType'] + ')';
 			c['color'] = '#000';
 		}
 		Ti.API.info("Number of clients = " + networkClients.length);
@@ -64,8 +64,8 @@ function Medialink_mwn_wapr300n(masterView) {
 				var entryExists = false;
 				for(var j=0; j < networkClients.length; j++) {
 					if(networkClients[j]['ip4Address'] == netClient['ip4Address']) {
-						Ti.API.info("Entry exists for " + netClient['ip4Address']);
 						entryExists = true;
+						Ti.API.info("Entry exists for " + netClient['ip4Address']);
 						networkClients[j]['connectionType'] = netClient['connectionType'];
 					}
 				}
@@ -90,7 +90,7 @@ function Medialink_mwn_wapr300n(masterView) {
 			for(var i=0; i < clientList.length; i++) {
 				var c = clientList[i].replace("'", "");
 				var data = c.split(";");
-				var netClient = { 'hostname': data[0], 'ip4Address': data[1], 'macAddress': data[2], 'connectionType': 'Wireless' };
+				var netClient = { 'hostname': data[0] || 'Unknown Device', 'ip4Address': data[1], 'macAddress': data[2], 'connectionType': 'Wireless' };
 				networkClients.push(netClient);
 				Ti.API.info(data[1]);
 			}
