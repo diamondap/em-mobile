@@ -19,6 +19,32 @@ function Medialink_mwn_wapr300n(masterView) {
 	var baseUrl = "http://192.168.1.1";
 	var HttpClient = require('../HttpClient');
 	var client = HttpClient();
+	
+	function setClientTitles() {
+		for(var i=0; i < networkClients.length; i++) {
+			var c = networkClients[i];
+			c['title'] = c['hostname'];
+			c['color'] = '#000';
+		}
+		Ti.API.info("Number of clients = " + networkClients.length);
+	}
+	
+	function showNetClientList() {
+		setClientTitles();
+		var table = Ti.UI.createTableView({
+			data: networkClients
+		});
+		masterView.add(table);
+		
+		table.addEventListener('click', function(e) {
+			masterView.fireEvent('itemSelected', {
+				hostname: e.rowData.hostname,
+				ip4Address: e.rowData.ip4Address,
+				connectionType: e.rowData.connectionType,
+				macAddress: e.rowData.macAddress
+			});
+		});
+	}
 
 	// Traffic stats includes info about all active
 	// clients, including those with static IP addresses.
@@ -29,7 +55,10 @@ function Medialink_mwn_wapr300n(masterView) {
 		client.get(url, null, function(e) {
 			var lines = client.client.responseText.split("\n");
 			for(var i=0; i < lines.length; i++) {
-				var c = lines[i].replace("'", "").replace("\r", "");
+				var c = lines[i].replace("'", "").trim();
+				if (c == '') {
+					continue;	
+				}
 				var data = c.split(";");
 				var netClient = { 'hostname': 'Unknown Device', 'macAddress': '00:00:00:00:00:00', 'ip4Address': data[0], 'connectionType': data[7] };
 				var entryExists = false;
@@ -45,7 +74,8 @@ function Medialink_mwn_wapr300n(masterView) {
 					networkClients.push(netClient);
 				}				
 			}
-		});		
+			showNetClientList();
+		});
 	}
 
 	// Most clients are DHCP

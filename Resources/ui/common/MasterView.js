@@ -5,7 +5,7 @@ function MasterView() {
 		backgroundColor:'white'
 	});
 
-
+/*
 	//some dummy data for our table view
 	var tableData = [
 		{title:'Apples', price:'1.25', hasChild:true, color: '#000'},
@@ -15,6 +15,7 @@ function MasterView() {
 		{title:'Pears', price:'1.40', hasChild:true, color: '#000'},
 		{title:'Kiwis', price:'1.00', hasChild:true, color: '#000'}
 	];
+
 
 	var table = Ti.UI.createTableView({
 		data:tableData
@@ -28,7 +29,7 @@ function MasterView() {
 			price:e.rowData.price
 		});
 	});
-
+*/
 
 	var Router = require("../../em/routers/medialink_mwn_wapr300n");
 	var router = Router(self);
